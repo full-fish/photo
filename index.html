@@ -5,175 +5,216 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>좋은 말로 할때 다들 오셈</title>
     <style>
-                  :root { color-scheme: dark; }
+            /* 전체 박스 사이즈 계산 안정화 */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
 
-                  body {
-                    margin: 0;
-                    min-height: 100vh;
-                    display: grid;
-                    place-items: center;
-                    background-color: #111;
-                    color: #eee;
-                    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-                  }
+      /* 중앙 레일 요소들이 부모 폭을 절대 넘지 않도록 */
+      .center > * {
+        max-width: 100%;
+      }
 
-                  a { color: inherit; text-decoration: none; }
-
-                  /* 3열 그리드: 가운데 열을 고정 폭으로(최대 400px) */
-                  .container {
-                    width: 100%;
-                    max-width: 1200px;
-                    display: grid;
-                    grid-template-columns:
-                      clamp(44px, 12vw, 90px)
-                      minmax(260px, 400px)
-                      clamp(44px, 12vw, 90px);
-                    justify-content: center;
-                    align-items: start;
-                    gap: 3vw;
-                    padding: 4vh 2vw;
-                    box-sizing: border-box;
-                  }
-
-                  /* 사이드 스택 */
-                  .side {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 10px;
-                  }
-
-                  .img-box { position: relative; display: inline-block; }
-                  .side .img-box img {
-                    display: block;
-                    width: clamp(44px, 10vw, 90px); /* 폭 기준 동일 */
-                    height: auto;                   /* 비율 유지 */
-                    aspect-ratio: 1 / 1;            /* 정사각 비율 */
-                    object-fit: cover;              /* 꽉 채우기 */
-                    border-radius: 8px;
-                    opacity: 0.9;
-                    transition: transform 0.3s ease, opacity 0.3s ease;
-                  }
-                  .img-box:hover img { transform: scale(1.05); opacity: 1; }
-
-                  .caption {
-                    position: absolute; inset: 0;
-                    display: flex; justify-content: center; align-items: center;
-                    color: #fff; font-weight: bold; font-size: 0.9rem;
-                    background: rgba(0,0,0,0.5);
-                    border-radius: 8px; opacity: 0; transition: opacity .3s ease;
-                  }
-                  .img-box:hover .caption { opacity: 1; }
-
-                  /* 중앙 열: 수직 스택 + 중앙 정렬 */
-                  .center { display: flex; flex-direction: column; align-items: center; }
-
-                  /* 메인 이미지: 중앙 열 너비(최대 400px)에 맞춰 100%로 */
-                  .center .img-box img {
-                    width: 100%;
-                    max-width: 400px;
-                    height: auto;
-                    border-radius: 16px;
-                    box-shadow: 0 0 20px rgba(0,0,0,.5);
-                    display: block;
-                  }
-                  .center .caption { font-size: 1.6rem; border-radius: 16px; }
-
-                  /* 주소 + 위로 버튼 */
-              /* 주소 + 위로 버튼 (가운데 정렬) */
-      /* 주소 + 화살표: 전부 중앙 정렬 */
-      .address-row {
+      /* 주소/방명록은 항상 이미지 폭(센터 열) 안으로 */
+      .address-row,
+      .guestbook {
         width: 100%;
-        max-width: 400px;
-        margin: 10px auto 0;
-        text-align: center;          /* ✅ 전체 중앙 정렬 */
-        color: #cfcfcf;
-        font-size: 14px;
+        max-width: 100%; /* ← 센터 열 폭을 상한으로 (이미 센터가 400px 상한) */
       }
 
+      /* 폼 그리드 자식이 줄어들 수 있게 (기본 min-width:auto → 0) */
+      .form > * {
+        min-width: 0;
+      }
+
+      /* 버튼은 줄바꿈 없이, 입력은 공간 내에서 줄이기 */
+      .form .button {
+        white-space: nowrap;
+      }
+
+      /* 긴 단어/URL로 인한 삐져나감 방지 */
+      .item,
+      .msg,
       .address-text {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
+        overflow-wrap: anywhere; /* 단어 중간이라도 줄바꿈 허용 */
       }
 
-      .to-top {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        margin-left: 8px;            /* ✅ 텍스트와 살짝 간격 */
-        border-radius: 50%;
-        border: 1px solid #2a2a2a;
-        background: #1a1a1a;
-        color: #eee;
-        cursor: pointer;
-        vertical-align: middle;
+      /* 최후의 안전장치 (수평 스크롤 제거) */
+      html, body {
+        overflow-x: hidden;
       }
-      .to-top:hover { filter: brightness(.95); }
+
+                        :root { color-scheme: dark; }
+
+                        body {
+                          margin: 0;
+                          min-height: 100vh;
+                          display: grid;
+                          place-items: center;
+                          background-color: #111;
+                          color: #eee;
+                          font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+                        }
+
+                        a { color: inherit; text-decoration: none; }
+
+                        /* 3열 그리드: 가운데 열을 고정 폭으로(최대 400px) */
+                        .container {
+                          width: 100%;
+                          max-width: 1200px;
+                          display: grid;
+                          grid-template-columns:
+                            clamp(44px, 12vw, 90px)
+                            minmax(260px, 400px)
+                            clamp(44px, 12vw, 90px);
+                          justify-content: center;
+                          align-items: start;
+                          gap: 3vw;
+                          padding: 4vh 2vw;
+                          box-sizing: border-box;
+                        }
+
+                        /* 사이드 스택 */
+                        .side {
+                          display: flex;
+                          flex-direction: column;
+                          align-items: center;
+                          gap: 10px;
+                        }
+
+                        .img-box { position: relative; display: inline-block; }
+                        .side .img-box img {
+                          display: block;
+                          width: clamp(44px, 10vw, 90px); /* 폭 기준 동일 */
+                          height: auto;                   /* 비율 유지 */
+                          aspect-ratio: 1 / 1;            /* 정사각 비율 */
+                          object-fit: cover;              /* 꽉 채우기 */
+                          border-radius: 8px;
+                          opacity: 0.9;
+                          transition: transform 0.3s ease, opacity 0.3s ease;
+                        }
+                        .img-box:hover img { transform: scale(1.05); opacity: 1; }
+
+                        .caption {
+                          position: absolute; inset: 0;
+                          display: flex; justify-content: center; align-items: center;
+                          color: #fff; font-weight: bold; font-size: 0.9rem;
+                          background: rgba(0,0,0,0.5);
+                          border-radius: 8px; opacity: 0; transition: opacity .3s ease;
+                        }
+                        .img-box:hover .caption { opacity: 1; }
+
+                        /* 중앙 열: 수직 스택 + 중앙 정렬 */
+                        .center { display: flex; flex-direction: column; align-items: center; }
+
+                        /* 메인 이미지: 중앙 열 너비(최대 400px)에 맞춰 100%로 */
+                        .center .img-box img {
+                          width: 100%;
+                          max-width: 400px;
+                          height: auto;
+                          border-radius: 16px;
+                          box-shadow: 0 0 20px rgba(0,0,0,.5);
+                          display: block;
+                        }
+                        .center .caption { font-size: 1.6rem; border-radius: 16px; }
+
+                        /* 주소 + 위로 버튼 */
+                    /* 주소 + 위로 버튼 (가운데 정렬) */
+            /* 주소 + 화살표: 전부 중앙 정렬 */
+            .address-row {
+              width: 100%;
+              max-width: 400px;
+              margin: 10px auto 0;
+              text-align: center;          /* ✅ 전체 중앙 정렬 */
+              color: #cfcfcf;
+              font-size: 14px;
+            }
+
+            .address-text {
+              display: inline-flex;
+              align-items: center;
+              gap: 6px;
+            }
+
+            .to-top {
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              width: 32px;
+              height: 32px;
+              margin-left: 8px;            /* ✅ 텍스트와 살짝 간격 */
+              border-radius: 50%;
+              border: 1px solid #2a2a2a;
+              background: #1a1a1a;
+              color: #eee;
+              cursor: pointer;
+              vertical-align: middle;
+            }
+            .to-top:hover { filter: brightness(.95); }
 
 
 
-                  /* 방명록: 메인 이미지와 동일 폭 */
-                  .guestbook {
-                    width: 100%;
-                    max-width: 400px;
-                    margin: 20px auto 0;
-                    display: grid;
-                    gap: 12px;
-                  }
+                        /* 방명록: 메인 이미지와 동일 폭 */
+                        .guestbook {
+                          width: 100%;
+                          max-width: 400px;
+                          margin: 20px auto 0;
+                          display: grid;
+                          gap: 12px;
+                        }
 
-                  .form {
-                    display: grid;
-                    grid-template-columns: 0.9fr 1.1fr auto;
-                    gap: 8px;
-                    align-items: center;
-                  }
+                        .form {
+                          display: grid;
+                          grid-template-columns: 0.9fr 1.1fr auto;
+                          gap: 8px;
+                          align-items: center;
+                        }
 
-                  .input, .button {
-                    padding: 8px 10px;
-                    border-radius: 10px;
-                    border: 1px solid #2a2a2a;
-                    background: #1a1a1a;
-                    color: #eee;
-                    font-size: 15px;
-                  }
-                  .input::placeholder { color: #8a8a8a; }
+                        .input, .button {
+                          padding: 8px 10px;
+                          border-radius: 10px;
+                          border: 1px solid #2a2a2a;
+                          background: #1a1a1a;
+                          color: #eee;
+                          font-size: 15px;
+                        }
+                        .input::placeholder { color: #8a8a8a; }
 
-                  .button {
-                    background: #3b82f6;
-                    border: none;
-                    cursor: pointer;
-                    font-weight: 700;
-                  }
-                  .button:hover { filter: brightness(0.95); }
+                        .button {
+                          background: #3b82f6;
+                          border: none;
+                          cursor: pointer;
+                          font-weight: 700;
+                        }
+                        .button:hover { filter: brightness(0.95); }
 
-                  .status {
-                    font-size: 13px;
-                    color: #cfcfcf;
-                    text-align: left;
-                    padding: 2px 4px;
-                    min-height: 20px;
-                  }
+                        .status {
+                          font-size: 13px;
+                          color: #cfcfcf;
+                          text-align: left;
+                          padding: 2px 4px;
+                          min-height: 20px;
+                        }
 
-                  .list { display: grid; gap: 8px; }
-                  .item {
-                    background: #1a1a1a;
-                    border: 1px solid #252525;
-                    border-radius: 10px;
-                    padding: 8px 10px;
-                    line-height: 1.4;
-                    word-break: break-word;
-                  }
-                  .time { display: block; color: #a0a0a0; font-size: 12px; margin-bottom: 4px; }
-                  .name { font-weight: 800; color: #fff; }
-                  .msg  { margin-left: 6px; color: #e7e7e7; }
+                        .list { display: grid; gap: 8px; }
+                        .item {
+                          background: #1a1a1a;
+                          border: 1px solid #252525;
+                          border-radius: 10px;
+                          padding: 8px 10px;
+                          line-height: 1.4;
+                          word-break: break-word;
+                        }
+                        .time { display: block; color: #a0a0a0; font-size: 12px; margin-bottom: 4px; }
+                        .name { font-weight: 800; color: #fff; }
+                        .msg  { margin-left: 6px; color: #e7e7e7; }
 
-                  /* 아주 좁은 화면에서 입력라인 스택 */
-                  @media (max-width: 430px) {
-                    .form { grid-template-columns: 1fr; }
-                  }
+                        /* 아주 좁은 화면에서 입력라인 스택 */
+                        @media (max-width: 430px) {
+                          .form { grid-template-columns: 1fr; }
+                        }
     </style>
   </head>
   <body>
