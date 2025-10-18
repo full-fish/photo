@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>유리 갤러리</title>
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #111;
+      }
+      .container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 40px;
+      }
+      .side {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 80vh;
+      }
+      .img-box {
+        position: relative;
+        display: inline-block;
+      }
+      .img-box img {
+        display: block;
+        width: 120px;
+        border-radius: 8px;
+        opacity: 0.9;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+      .img-box:hover img {
+        transform: scale(1.05);
+        opacity: 1;
+      }
+      .caption {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1rem;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .img-box:hover .caption {
+        opacity: 1;
+      }
+      .center .img-box img {
+        height: 80vh;
+        width: auto;
+        border-radius: 16px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      }
+      .center .caption {
+        font-size: 2rem;
+        border-radius: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="side" id="left-side"></div>
+      <div class="center">
+        <div class="img-box">
+          <img src="image.png" alt="중앙 이미지" />
+          <div class="caption">초대장임 💌</div>
+        </div>
+      </div>
+      <div class="side" id="right-side"></div>
+    </div>
+
+    <script>
+      // 반복할 이미지 경로와 글자
+      const sideImage = "yuri.jpeg";
+      const sideText = "귀여운 유리 💚 ";
+      const repeatCount = 4; // 몇 개 만들지
+
+      // 왼쪽과 오른쪽 컨테이너 가져오기
+      const left = document.getElementById("left-side");
+      const right = document.getElementById("right-side");
+
+      // 반복 생성 함수
+      function createSideImage(container) {
+        for (let i = 0; i < repeatCount; i++) {
+          const box = document.createElement("div");
+          box.className = "img-box";
+
+          const img = document.createElement("img");
+          img.src = sideImage;
+          img.alt = "작은 이미지";
+
+          const caption = document.createElement("div");
+          caption.className = "caption";
+          caption.textContent = sideText;
+
+          box.appendChild(img);
+          box.appendChild(caption);
+          container.appendChild(box);
+        }
+      }
+
+      // 좌우 모두 생성
+      createSideImage(left);
+      createSideImage(right);
+    </script>
+  </body>
+</html>
