@@ -18,8 +18,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 4vw; /* 뷰포트 너비 비율로 간격 조절 */
-        flex-wrap: wrap; /* 작은 화면에서는 줄바꿈 허용 */
+        gap: 4vw;
+        flex-wrap: wrap;
       }
 
       .side {
@@ -34,9 +34,10 @@
         display: inline-block;
       }
 
+      /* 사이드 이미지 기본(데스크탑 기준) */
       .img-box img {
         display: block;
-        width: 10vw; /* 화면 너비 비율로 조정 */
+        width: 10vw;
         max-width: 120px;
         min-width: 70px;
         border-radius: 8px;
@@ -68,10 +69,10 @@
         opacity: 1;
       }
 
+      /* 중앙 이미지 기본(모바일 우선) */
       .center .img-box img {
-        height: 70vh;
-        max-height: 600px;
-        width: auto;
+        width: 80vw;
+        height: auto;
         border-radius: 16px;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
       }
@@ -81,34 +82,47 @@
         border-radius: 16px;
       }
 
-      /* 📱 모바일용 미디어쿼리 */
-      @media (max-width: 768px) {
+      /* 📱 모바일 + 태블릿 (≤1023px): 2단계도 모바일과 동일하게 */
+      @media (max-width: 1023px) {
         .container {
-          flex-direction: column; /* 위아래 배치 */
+          flex-direction: column;
           gap: 20px;
         }
 
         .side {
-          flex-direction: row; /* 양옆이 아닌 가로로 */
+          flex-direction: row;   /* 가로로 나열 */
           height: auto;
           justify-content: center;
           flex-wrap: wrap;
+          gap: 10px;
         }
 
+        /* ✅ 모바일/태블릿에서 사이드 이미지를 더 작게 */
         .img-box img {
-          width: 25vw;
-          max-width: 150px;
-          min-width: 80px;
+          width: 14vw;        /* 25→18→이번에 14vw로 더 축소 */
+          max-width: 90px;    /* 최대 크기도 더 줄임 */
+          min-width: 50px;    /* 최소 크기 */
         }
 
+        /* ✅ 중앙 이미지는 더 크게 */
         .center .img-box img {
-          width: 80vw;
+          width: 60vw;        /* 80vw → 90vw */
           height: auto;
           max-height: none;
+          max-width: none;
         }
 
         .center .caption {
-          font-size: 1.5rem;
+          font-size: 1.4rem;
+        }
+      }
+
+      /* 💻 데스크탑 (≥1024px) */
+      @media (min-width: 1024px) {
+        .center .img-box img {
+          width: 60vw;
+          height: auto;
+          max-width: 400px; /* 네가 맞춘 값 유지 */
         }
       }
     </style>
@@ -116,44 +130,56 @@
   <body>
     <div class="container">
       <div class="side" id="left-side"></div>
+
       <div class="center">
         <div class="img-box">
           <img src="image.jpeg" alt="중앙 이미지" />
           <div class="caption">초대장임 💌</div>
         </div>
       </div>
+
       <div class="side" id="right-side"></div>
     </div>
 
     <script>
       const sideImage = "yuri.jpeg";
       const sideText = "귀여운 유리 💚";
-      const repeatCount = 4;
 
       const left = document.getElementById("left-side");
       const right = document.getElementById("right-side");
 
-      function createSideImage(container) {
-        for (let i = 0; i < repeatCount; i++) {
-          const box = document.createElement("div");
-          box.className = "img-box";
+      // ≤1023px(모바일+태블릿)에서는 6개, 그 이상(데스크탑)에서는 4개
+      const mq = window.matchMedia("(max-width: 1023px)");
 
-          const img = document.createElement("img");
-          img.src = sideImage;
-          img.alt = "작은 이미지";
+      function renderSides(count) {
+        left.innerHTML = "";
+        right.innerHTML = "";
+        for (let i = 0; i < count; i++) {
+          const boxL = document.createElement("div");
+          boxL.className = "img-box";
+          const imgL = document.createElement("img");
+          imgL.src = sideImage;
+          imgL.alt = "작은 이미지";
+          const capL = document.createElement("div");
+          capL.className = "caption";
+          capL.textContent = sideText;
+          boxL.appendChild(imgL);
+          boxL.appendChild(capL);
 
-          const caption = document.createElement("div");
-          caption.className = "caption";
-          caption.textContent = sideText;
+          const boxR = boxL.cloneNode(true);
 
-          box.appendChild(img);
-          box.appendChild(caption);
-          container.appendChild(box);
+          left.appendChild(boxL);
+          right.appendChild(boxR);
         }
       }
 
-      createSideImage(left);
-      createSideImage(right);
+      // 초기 렌더
+      renderSides(mq.matches ? 4 : 4);
+
+      // 화면 크기 변경 시 자동 반영 (선택 사항이지만 편의상 추가)
+      mq.addEventListener("change", (e) => {
+        renderSides(e.matches ? 4 : 4);
+      });
     </script>
   </body>
 </html>
