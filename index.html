@@ -46,11 +46,15 @@
       .img-box { position: relative; display: inline-block; }
       .side .img-box img {
         display: block;
-        width: clamp(44px, 10vw, 90px);
+        width: clamp(44px, 10vw, 90px); /* 폭 기준 동일 */
+        height: auto;                   /* 비율 유지 */
+        aspect-ratio: 1 / 1;            /* ✅ 강제로 정사각 비율 */
+        object-fit: cover;              /* ✅ 이미지가 꽉 차게 */
         border-radius: 8px;
         opacity: 0.9;
         transition: transform 0.3s ease, opacity 0.3s ease;
       }
+
       .img-box:hover img { transform: scale(1.05); opacity: 1; }
 
       .caption {
@@ -187,22 +191,24 @@
 
     <script>
       /* ===== 사이드 이미지: 중앙 높이에 맞춰 자동 증감 ===== */
-      const sideImage = "yuri.jpeg";
-      const sideText  = "귀여운 유리 💚";
+      const leftImage = "yuri.jpeg";
+      const rightImage = "pari.jpeg";
+      const leftText  = "귀여운 유리 💚";
+      const rightText = "사나운 파리 💙";
 
       const left      = document.getElementById("left-side");
       const right     = document.getElementById("right-side");
       const centerCol = document.querySelector(".center");
 
-      function createSideBox() {
+      function createSideBox(imgSrc, text) {
         const box = document.createElement("div");
         box.className = "img-box";
         const img = document.createElement("img");
-        img.src = sideImage;
+        img.src = imgSrc;
         img.alt = "작은 이미지";
         const cap = document.createElement("div");
         cap.className = "caption";
-        cap.textContent = sideText;
+        cap.textContent = text;
         box.appendChild(img);
         box.appendChild(cap);
         return box;
@@ -212,7 +218,7 @@
         let probe = left.querySelector(".img-box");
         let removeAfter = false;
         if (!probe) {
-          probe = createSideBox();
+          probe = createSideBox(leftImage, leftText);
           probe.style.visibility = "hidden";
           left.appendChild(probe);
           removeAfter = true;
@@ -229,10 +235,10 @@
         return Math.max(1, Math.round(rect.height));
       }
 
-      function setChildrenCount(container, count) {
+      function setChildrenCount(container, count, imgSrc, text) {
         const current = container.children.length;
         if (current < count) {
-          for (let i = current; i < count; i++) container.appendChild(createSideBox());
+          for (let i = current; i < count; i++) container.appendChild(createSideBox(imgSrc, text));
         } else if (current > count) {
           while (container.children.length > count) {
             container.removeChild(container.lastElementChild);
@@ -244,20 +250,19 @@
         const centerH = getCenterHeight();
         const itemH   = measureSideItemHeight();
         const need    = Math.max(4, Math.ceil(centerH / itemH)); // 최소 4개 유지
-        setChildrenCount(left, need);
-        setChildrenCount(right, need);
+
+        setChildrenCount(left,  need, leftImage,  leftText);
+        setChildrenCount(right, need, rightImage, rightText);
       }
 
-      // 리사이즈에 대응(디바운스)
+      // 리사이즈 대응
       function debounce(fn, ms = 120) {
         let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
       }
-      const onResize = debounce(syncSidesWithCenter, 120);
-      window.addEventListener("resize", onResize);
+      window.addEventListener("resize", debounce(syncSidesWithCenter, 120));
 
       // 중앙 영역 변화(목록 증감 등)에 자동 반응
-      const ro = new ResizeObserver(() => syncSidesWithCenter());
-      ro.observe(centerCol);
+      new ResizeObserver(() => syncSidesWithCenter()).observe(centerCol);
 
       // 초기 사이드 생성
       syncSidesWithCenter();
