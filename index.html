@@ -10,9 +10,8 @@
       body {
         margin: 0;
         min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        display: grid;
+        place-items: center;
         background-color: #111;
         color: #eee;
         font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
@@ -20,72 +19,71 @@
 
       a { color: inherit; text-decoration: none; }
 
+      /* ✅ 3열 그리드: 가운데 열을 고정 폭으로(최대 400px) */
       .container {
-        display: flex;
-        align-items: center;
+        width: 100%;
+        max-width: 1200px;
+        display: grid;
+        grid-template-columns:
+          clamp(44px, 12vw, 90px)
+          minmax(260px, 400px)
+          clamp(44px, 12vw, 90px);
         justify-content: center;
-        gap: 4vw;
-        flex-wrap: wrap;
+        align-items: start;
+        gap: 3vw;
         padding: 4vh 2vw;
         box-sizing: border-box;
-        width: 100%;
       }
 
-      /* 사이드 - 세로로 쌓고 gap으로 간격 */
+      /* 사이드 스택 */
       .side {
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 10px;
-        height: auto;
       }
 
-      .img-box {
-        position: relative;
-        display: inline-block;
-      }
-
-      .img-box img {
+      .img-box { position: relative; display: inline-block; }
+      .side .img-box img {
         display: block;
-        width: 10vw;
-        max-width: 120px;
-        min-width: 70px;
+        width: clamp(44px, 10vw, 90px);
         border-radius: 8px;
         opacity: 0.9;
         transition: transform 0.3s ease, opacity 0.3s ease;
       }
-
       .img-box:hover img { transform: scale(1.05); opacity: 1; }
 
       .caption {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: white;
-        font-weight: bold;
-        font-size: 1rem;
-        background: rgba(0, 0, 0, 0.5);
-        border-radius: 8px;
-        opacity: 0;
-        transition: opacity 0.3s ease;
+        position: absolute; inset: 0;
+        display: flex; justify-content: center; align-items: center;
+        color: #fff; font-weight: bold; font-size: 0.9rem;
+        background: rgba(0,0,0,0.5);
+        border-radius: 8px; opacity: 0; transition: opacity .3s ease;
       }
       .img-box:hover .caption { opacity: 1; }
 
-      /* 중앙 이미지 */
+      /* ✅ 중앙 열: 수직 스택 + 중앙 정렬 */
+      .center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;   /* 중앙 정렬 핵심 */
+      }
+
+      /* ✅ 메인 이미지: 중앙 열 너비(최대 400px)에 맞춰 100%로 */
       .center .img-box img {
-        width: 80vw;
+        width: 100%;
+        max-width: 400px;
         height: auto;
         border-radius: 16px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 0 20px rgba(0,0,0,.5);
+        display: block;
       }
-      .center .caption { font-size: 2rem; border-radius: 16px; }
+      .center .caption { font-size: 1.6rem; border-radius: 16px; }
 
-      /* 방명록 - 메인 이미지 최대폭(400px)에 맞춤 */
+      /* 방명록: 메인 이미지와 동일 폭 */
       .guestbook {
         width: 100%;
-        max-width: 400px; /* 메인 이미지 폭과 동일 */
+        max-width: 400px;
         margin: 20px auto 0;
         display: grid;
         gap: 12px;
@@ -93,7 +91,7 @@
 
       .form {
         display: grid;
-        grid-template-columns: 0.8fr 1.2fr auto;
+        grid-template-columns: 0.9fr 1.1fr auto;
         gap: 8px;
         align-items: center;
       }
@@ -135,31 +133,11 @@
       }
       .time { display: block; color: #a0a0a0; font-size: 12px; margin-bottom: 4px; }
       .name { font-weight: 800; color: #fff; }
-      .msg { margin-left: 6px; color: #e7e7e7; }
+      .msg  { margin-left: 6px; color: #e7e7e7; }
 
-      /* 모바일/태블릿 */
-      @media (max-width: 1023px) {
-        .container { flex-direction: column; gap: 20px; }
-        .side {
-          flex-direction: row;
-          flex-wrap: wrap;
-          justify-content: center;
-          gap: 10px;
-          height: auto;
-        }
-        .img-box img { width: 14vw; max-width: 90px; min-width: 50px; }
-        .center .img-box img { width: 60vw; height: auto; max-height: none; max-width: none; }
-        .center .caption { font-size: 1.4rem; }
+      /* 아주 좁은 화면에서 입력라인 스택 */
+      @media (max-width: 430px) {
         .form { grid-template-columns: 1fr; }
-      }
-
-      /* 데스크탑 */
-      @media (min-width: 1024px) {
-        .center .img-box img {
-          width: 60vw;
-          height: auto;
-          max-width: 400px; /* 이 값과 guestbook max-width를 동일하게 유지 */
-        }
       }
     </style>
   </head>
@@ -196,163 +174,150 @@
     </div>
 
     <script>
-            /* ===== 사이드 이미지 구성 ===== */
-            const sideImage = "yuri.jpeg";
-            const sideText = "귀여운 유리 💚";
+      /* ===== 사이드 이미지 구성 ===== */
+      const sideImage = "yuri.jpeg";
+      const sideText  = "귀여운 유리 💚";
 
-            const left  = document.getElementById("left-side");
-            const right = document.getElementById("right-side");
-            const centerCol = document.querySelector(".center");
-            const mq = window.matchMedia("(max-width: 1023px)");
+      const left  = document.getElementById("left-side");
+      const right = document.getElementById("right-side");
+      const centerCol = document.querySelector(".center");
 
-            function createSideBox() {
-              const box = document.createElement("div");
-              box.className = "img-box";
-              const img = document.createElement("img");
-              img.src = sideImage;
-              img.alt = "작은 이미지";
-              const cap = document.createElement("div");
-              cap.className = "caption";
-              cap.textContent = sideText;
-              box.appendChild(img);
-              box.appendChild(cap);
-              return box;
-            }
+      function createSideBox() {
+        const box = document.createElement("div");
+        box.className = "img-box";
+        const img = document.createElement("img");
+        img.src = sideImage;
+        img.alt = "작은 이미지";
+        const cap = document.createElement("div");
+        cap.className = "caption";
+        cap.textContent = sideText;
+        box.appendChild(img);
+        box.appendChild(cap);
+        return box;
+      }
 
-            function measureSideItemHeight() {
-              let probe = left.querySelector(".img-box");
-              let removeAfter = false;
-              if (!probe) {
-                probe = createSideBox();
-                probe.style.visibility = "hidden";
-                left.appendChild(probe);
-                removeAfter = true;
-              }
-              const rect = probe.getBoundingClientRect();
-              const gap = 10; // CSS .side gap과 동일
-              const itemH = rect.height + gap;
-              if (removeAfter) left.removeChild(probe);
-              return Math.max(1, Math.round(itemH));
-            }
+      function measureSideItemHeight() {
+        let probe = left.querySelector(".img-box");
+        let removeAfter = false;
+        if (!probe) {
+          probe = createSideBox();
+          probe.style.visibility = "hidden";
+          left.appendChild(probe);
+          removeAfter = true;
+        }
+        const rect = probe.getBoundingClientRect();
+        const gap  = 10;
+        const itemH = rect.height + gap;
+        if (removeAfter) left.removeChild(probe);
+        return Math.max(1, Math.round(itemH));
+      }
 
-            function getCenterHeight() {
-              const rect = centerCol.getBoundingClientRect();
-              return Math.max(1, Math.round(rect.height));
-            }
+      function getCenterHeight() {
+        const rect = centerCol.getBoundingClientRect();
+        return Math.max(1, Math.round(rect.height));
+      }
 
-            function setChildrenCount(container, count) {
-              const current = container.children.length;
-              if (current < count) {
-                for (let i = current; i < count; i++) container.appendChild(createSideBox());
-              } else if (current > count) {
-                while (container.children.length > count) {
-                  container.removeChild(container.lastElementChild);
-                }
-              }
-            }
+      function setChildrenCount(container, count) {
+        const current = container.children.length;
+        if (current < count) {
+          for (let i = current; i < count; i++) container.appendChild(createSideBox());
+        } else if (current > count) {
+          while (container.children.length > count) {
+            container.removeChild(container.lastElementChild);
+          }
+        }
+      }
 
-            function syncSidesWithCenter() {
-              // 모바일은 가로 래핑이므로 과도한 개수 생성 금지
-              if (mq.matches) {
-                setChildrenCount(left, 4);
-                setChildrenCount(right, 4);
-                return;
-              }
-              const centerH = getCenterHeight();
-              const itemH   = measureSideItemHeight();
-              const need    = Math.max(4, Math.ceil(centerH / itemH)); // 최소 4개
-              setChildrenCount(left, need);
-              setChildrenCount(right, need);
-            }
+      // 중앙 높이에 맞춰 좌우 자동 증감(모바일 포함)
+      function syncSidesWithCenter() {
+        const centerH = getCenterHeight();
+        const itemH   = measureSideItemHeight();
+        const need    = Math.max(4, Math.ceil(centerH / itemH)); // 최소 4개 유지
+        setChildrenCount(left, need);
+        setChildrenCount(right, need);
+      }
 
-            function debounce(fn, ms = 120) {
-              let t;
-              return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
-            }
-            const onResize = debounce(syncSidesWithCenter, 120);
-            window.addEventListener("resize", onResize);
-            mq.addEventListener("change", syncSidesWithCenter);
+      function debounce(fn, ms = 120) {
+        let t;
+        return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+      }
+      const onResize = debounce(syncSidesWithCenter, 120);
+      window.addEventListener("resize", onResize);
 
-            const ro = new ResizeObserver(() => syncSidesWithCenter());
-            ro.observe(centerCol);
+      const ro = new ResizeObserver(() => syncSidesWithCenter());
+      ro.observe(centerCol);
 
-            /* ===== 방명록 연동 ===== */
-            const WEBAPP = "https://script.google.com/macros/s/AKfycbzNwl52rSDRx6IGZ2iymlkH7hM2cJwQCdKNMzFzRfyYqBsB_MB3c0cqwv11nVMexNz1Pg/exec";
+      /* ===== 방명록 연동 ===== */
+      const WEBAPP = "https://script.google.com/macros/s/AKfycbzNwl52rSDRx6IGZ2iymlkH7hM2cJwQCdKNMzFzRfyYqBsB_MB3c0cqwv11nVMexNz1Pg/exec";
 
-            const statusEl = document.getElementById("status");
-            const listEl = document.getElementById("list");
-            const formEl = document.getElementById("guestForm");
-            const nameEl = document.getElementById("name");
-            const msgEl  = document.getElementById("msg");
+      const statusEl = document.getElementById("status");
+      const listEl   = document.getElementById("list");
+      const formEl   = document.getElementById("guestForm");
+      const nameEl   = document.getElementById("name");
+      const msgEl    = document.getElementById("msg");
 
-            function formatTime(iso) {
-              const d = new Date(iso);
-              if (isNaN(d.getTime())) return "";
-              return d.toLocaleString("ko-KR", { dateStyle: "short", timeStyle: "short" });
-            }
+      function formatTime(iso) {
+        const d = new Date(iso);
+        if (isNaN(d.getTime())) return "";
+        return d.toLocaleString("ko-KR", { dateStyle: "short", timeStyle: "short" });
+      }
 
-            async function load(limit = 100) {
-              statusEl.textContent = "불러오는 중...";
-              listEl.innerHTML = "";
-              try {
-                const res = await fetch(`${WEBAPP}?limit=${limit}`);
-                const data = await res.json();
-                if (!data.ok) throw new Error(data.error || "서버 오류");
+      async function load(limit = 100) {
+        statusEl.textContent = "불러오는 중...";
+        listEl.innerHTML = "";
+        try {
+          const res = await fetch(`${WEBAPP}?limit=${limit}`);
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || "서버 오류");
 
-                const rows = Array.isArray(data.rows) ? data.rows : [];
-                if (rows.length === 0) {
-                  statusEl.textContent = "아직 등록된 방명록이 없습니다.";
-                  syncSidesWithCenter(); // 중앙 높이 반영
-                  return;
-                }
+          const rows = Array.isArray(data.rows) ? data.rows : [];
+          if (rows.length === 0) {
+            statusEl.textContent = "아직 등록된 방명록이 없습니다.";
+            syncSidesWithCenter();
+            return;
+          }
 
-                statusEl.textContent = "";
-                for (const r of rows) {
-                  const time = formatTime(r.ts);
-                  const name = String(r.name || "");
-                  const msgHtml = String(r.msg || "").replace(/\n/g, "<br>");
+          statusEl.textContent = "";
+          for (const r of rows) {
+            const time   = formatTime(r.ts);
+            const name   = String(r.name || "");
+            const msgHtml = String(r.msg || "").replace(/\n/g, "<br>");
 
-                  const item = document.createElement("div");
-                  item.className = "item";
-                  item.innerHTML = `
-                    <span class="time">${time}</span>
-                    <span class="name">${name}</span>
-                    ${msgHtml ? `<span class="msg">: ${msgHtml}</span>` : ""}
-                  `;
-                  listEl.appendChild(item);
-                }
-              } catch (err) {
-                statusEl.textContent = "데이터 불러오기 실패: " + err.message;
-                console.error("load error:", err);
-              } finally {
-                // 목록 렌더 완료 후 사이드 이미지 개수 동기화
-                syncSidesWithCenter();
-              }
-            }
+            const item = document.createElement("div");
+            item.className = "item";
+            item.innerHTML = `
+              <span class="time">${time}</span>
+              <span class="name">${name}</span>
+              ${msgHtml ? `<span class="msg">: ${msgHtml}</span>` : ""}
+            `;
+            listEl.appendChild(item);
+          }
+        } catch (err) {
+          statusEl.textContent = "데이터 불러오기 실패: " + err.message;
+          console.error("load error:", err);
+        } finally {
+          syncSidesWithCenter();
+        }
+      }
 
-            formEl.addEventListener("submit", async (e) => {
+      formEl.addEventListener("submit", async (e) => {
         e.preventDefault();
         const name = nameEl.value.trim();
         const msg  = msgEl.value.trim();
         if (!name) return alert("이름은 필수입니다!");
 
         try {
-          // ✅ 저장 중 메시지 표시
           statusEl.textContent = "💾 저장 중입니다...";
 
           const res = await fetch(WEBAPP, {
             method: "POST",
-            // 프리플라이트 방지: 헤더 미지정
             body: JSON.stringify({ name, msg })
           });
           const data = await res.json();
           if (!data.ok) throw new Error(data.error || "저장 실패");
 
           formEl.reset();
-          await load();              // 저장 후 목록 갱신
-          syncSidesWithCenter();     // 중앙 높이 반영
-
-          // ✅ 저장 완료 후 메시지 초기화
+          await load();
           statusEl.textContent = "✅ 저장되었습니다!";
           setTimeout(() => (statusEl.textContent = ""), 1500);
         } catch (err) {
@@ -362,10 +327,9 @@
         }
       });
 
-
-            // 초기 사이드/목록 셋업
-            syncSidesWithCenter();
-            load();
+      // 초기 셋업
+      syncSidesWithCenter();
+      load();
     </script>
   </body>
 </html>
