@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>좋은 말로 할때 다들 오셈</title>
     <style>
+      :root { color-scheme: dark; }
+
       body {
         margin: 0;
         min-height: 100vh;
@@ -12,7 +14,11 @@
         justify-content: center;
         align-items: center;
         background-color: #111;
+        color: #eee;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
       }
+
+      a { color: inherit; text-decoration: none; }
 
       .container {
         display: flex;
@@ -20,13 +26,18 @@
         justify-content: center;
         gap: 4vw;
         flex-wrap: wrap;
+        padding: 4vh 2vw;
+        box-sizing: border-box;
+        width: 100%;
       }
 
+      /* 사이드 - 세로로 쌓고 gap으로 간격 */
       .side {
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
-        height: 80vh;
+        align-items: center;
+        gap: 10px;
+        height: auto;
       }
 
       .img-box {
@@ -34,7 +45,6 @@
         display: inline-block;
       }
 
-      /* 사이드 이미지 기본(데스크탑 기준) */
       .img-box img {
         display: block;
         width: 10vw;
@@ -45,10 +55,7 @@
         transition: transform 0.3s ease, opacity 0.3s ease;
       }
 
-      .img-box:hover img {
-        transform: scale(1.05);
-        opacity: 1;
-      }
+      .img-box:hover img { transform: scale(1.05); opacity: 1; }
 
       .caption {
         position: absolute;
@@ -64,65 +71,94 @@
         opacity: 0;
         transition: opacity 0.3s ease;
       }
+      .img-box:hover .caption { opacity: 1; }
 
-      .img-box:hover .caption {
-        opacity: 1;
-      }
-
-      /* 중앙 이미지 기본(모바일 우선) */
+      /* 중앙 이미지 */
       .center .img-box img {
         width: 80vw;
         height: auto;
         border-radius: 16px;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
       }
+      .center .caption { font-size: 2rem; border-radius: 16px; }
 
-      .center .caption {
-        font-size: 2rem;
-        border-radius: 16px;
+      /* 방명록 - 메인 이미지 최대폭(400px)에 맞춤 */
+      .guestbook {
+        width: 100%;
+        max-width: 400px; /* 메인 이미지 폭과 동일 */
+        margin: 20px auto 0;
+        display: grid;
+        gap: 12px;
       }
 
-      /* 📱 모바일 + 태블릿 (≤1023px): 2단계도 모바일과 동일하게 */
+      .form {
+        display: grid;
+        grid-template-columns: 0.8fr 1.2fr auto;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .input, .button {
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: 1px solid #2a2a2a;
+        background: #1a1a1a;
+        color: #eee;
+        font-size: 15px;
+      }
+      .input::placeholder { color: #8a8a8a; }
+
+      .button {
+        background: #3b82f6;
+        border: none;
+        cursor: pointer;
+        font-weight: 700;
+      }
+      .button:hover { filter: brightness(0.95); }
+
+      .status {
+        font-size: 13px;
+        color: #cfcfcf;
+        text-align: left;
+        padding: 2px 4px;
+        min-height: 20px;
+      }
+
+      .list { display: grid; gap: 8px; }
+      .item {
+        background: #1a1a1a;
+        border: 1px solid #252525;
+        border-radius: 10px;
+        padding: 8px 10px;
+        line-height: 1.4;
+        word-break: break-word;
+      }
+      .time { display: block; color: #a0a0a0; font-size: 12px; margin-bottom: 4px; }
+      .name { font-weight: 800; color: #fff; }
+      .msg { margin-left: 6px; color: #e7e7e7; }
+
+      /* 모바일/태블릿 */
       @media (max-width: 1023px) {
-        .container {
-          flex-direction: column;
-          gap: 20px;
-        }
-
+        .container { flex-direction: column; gap: 20px; }
         .side {
-          flex-direction: row;   /* 가로로 나열 */
-          height: auto;
-          justify-content: center;
+          flex-direction: row;
           flex-wrap: wrap;
+          justify-content: center;
           gap: 10px;
-        }
-
-        /* ✅ 모바일/태블릿에서 사이드 이미지를 더 작게 */
-        .img-box img {
-          width: 14vw;        /* 25→18→이번에 14vw로 더 축소 */
-          max-width: 90px;    /* 최대 크기도 더 줄임 */
-          min-width: 50px;    /* 최소 크기 */
-        }
-
-        /* ✅ 중앙 이미지는 더 크게 */
-        .center .img-box img {
-          width: 60vw;        /* 80vw → 90vw */
           height: auto;
-          max-height: none;
-          max-width: none;
         }
-
-        .center .caption {
-          font-size: 1.4rem;
-        }
+        .img-box img { width: 14vw; max-width: 90px; min-width: 50px; }
+        .center .img-box img { width: 60vw; height: auto; max-height: none; max-width: none; }
+        .center .caption { font-size: 1.4rem; }
+        .form { grid-template-columns: 1fr; }
       }
 
-      /* 💻 데스크탑 (≥1024px) */
+      /* 데스크탑 */
       @media (min-width: 1024px) {
         .center .img-box img {
           width: 60vw;
           height: auto;
-          max-width: 400px; /* 네가 맞춘 값 유지 */
+          max-width: 400px; /* 이 값과 guestbook max-width를 동일하게 유지 */
         }
       }
     </style>
@@ -133,55 +169,194 @@
 
       <div class="center">
         <div class="img-box">
-          <a href="https://naver.me/xQiHE2HB" target="_blank">
+          <a
+            href="https://naver.me/xQiHE2HB"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <img src="image.png" alt="중앙 이미지" />
             <div class="caption">초대장임 💌</div>
           </a>
         </div>
+
+        <!-- 메인 이미지 아래 방명록 -->
+        <section class="guestbook">
+          <form id="guestForm" class="form" autocomplete="off">
+            <input id="name" class="input" placeholder="이름" required />
+            <input id="msg" class="input" placeholder="메시지 (선택)" />
+            <button class="button" type="submit">저장</button>
+          </form>
+
+          <div id="status" class="status">불러오는 중...</div>
+          <div id="list" class="list"></div>
+        </section>
       </div>
 
       <div class="side" id="right-side"></div>
     </div>
 
     <script>
+      /* ===== 사이드 이미지 구성 ===== */
       const sideImage = "yuri.jpeg";
       const sideText = "귀여운 유리 💚";
 
-      const left = document.getElementById("left-side");
+      const left  = document.getElementById("left-side");
       const right = document.getElementById("right-side");
-
-      // ≤1023px(모바일+태블릿)에서는 6개, 그 이상(데스크탑)에서는 4개
+      const centerCol = document.querySelector(".center");
       const mq = window.matchMedia("(max-width: 1023px)");
 
-      function renderSides(count) {
-        left.innerHTML = "";
-        right.innerHTML = "";
-        for (let i = 0; i < count; i++) {
-          const boxL = document.createElement("div");
-          boxL.className = "img-box";
-          const imgL = document.createElement("img");
-          imgL.src = sideImage;
-          imgL.alt = "작은 이미지";
-          const capL = document.createElement("div");
-          capL.className = "caption";
-          capL.textContent = sideText;
-          boxL.appendChild(imgL);
-          boxL.appendChild(capL);
+      function createSideBox() {
+        const box = document.createElement("div");
+        box.className = "img-box";
+        const img = document.createElement("img");
+        img.src = sideImage;
+        img.alt = "작은 이미지";
+        const cap = document.createElement("div");
+        cap.className = "caption";
+        cap.textContent = sideText;
+        box.appendChild(img);
+        box.appendChild(cap);
+        return box;
+      }
 
-          const boxR = boxL.cloneNode(true);
+      function measureSideItemHeight() {
+        let probe = left.querySelector(".img-box");
+        let removeAfter = false;
+        if (!probe) {
+          probe = createSideBox();
+          probe.style.visibility = "hidden";
+          left.appendChild(probe);
+          removeAfter = true;
+        }
+        const rect = probe.getBoundingClientRect();
+        const gap = 10; // CSS .side gap과 동일
+        const itemH = rect.height + gap;
+        if (removeAfter) left.removeChild(probe);
+        return Math.max(1, Math.round(itemH));
+      }
 
-          left.appendChild(boxL);
-          right.appendChild(boxR);
+      function getCenterHeight() {
+        const rect = centerCol.getBoundingClientRect();
+        return Math.max(1, Math.round(rect.height));
+      }
+
+      function setChildrenCount(container, count) {
+        const current = container.children.length;
+        if (current < count) {
+          for (let i = current; i < count; i++) container.appendChild(createSideBox());
+        } else if (current > count) {
+          while (container.children.length > count) {
+            container.removeChild(container.lastElementChild);
+          }
         }
       }
 
-      // 초기 렌더
-      renderSides(mq.matches ? 4 : 4);
+      function syncSidesWithCenter() {
+        // 모바일은 가로 래핑이므로 과도한 개수 생성 금지
+        if (mq.matches) {
+          setChildrenCount(left, 4);
+          setChildrenCount(right, 4);
+          return;
+        }
+        const centerH = getCenterHeight();
+        const itemH   = measureSideItemHeight();
+        const need    = Math.max(4, Math.ceil(centerH / itemH)); // 최소 4개
+        setChildrenCount(left, need);
+        setChildrenCount(right, need);
+      }
 
-      // 화면 크기 변경 시 자동 반영 (선택 사항이지만 편의상 추가)
-      mq.addEventListener("change", (e) => {
-        renderSides(e.matches ? 4 : 4);
+      function debounce(fn, ms = 120) {
+        let t;
+        return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+      }
+      const onResize = debounce(syncSidesWithCenter, 120);
+      window.addEventListener("resize", onResize);
+      mq.addEventListener("change", syncSidesWithCenter);
+
+      const ro = new ResizeObserver(() => syncSidesWithCenter());
+      ro.observe(centerCol);
+
+      /* ===== 방명록 연동 ===== */
+      const WEBAPP = "https://script.google.com/macros/s/AKfycbzNwl52rSDRx6IGZ2iymlkH7hM2cJwQCdKNMzFzRfyYqBsB_MB3c0cqwv11nVMexNz1Pg/exec";
+
+      const statusEl = document.getElementById("status");
+      const listEl = document.getElementById("list");
+      const formEl = document.getElementById("guestForm");
+      const nameEl = document.getElementById("name");
+      const msgEl  = document.getElementById("msg");
+
+      function formatTime(iso) {
+        const d = new Date(iso);
+        if (isNaN(d.getTime())) return "";
+        return d.toLocaleString("ko-KR", { dateStyle: "short", timeStyle: "short" });
+      }
+
+      async function load(limit = 100) {
+        statusEl.textContent = "불러오는 중...";
+        listEl.innerHTML = "";
+        try {
+          const res = await fetch(`${WEBAPP}?limit=${limit}`);
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || "서버 오류");
+
+          const rows = Array.isArray(data.rows) ? data.rows : [];
+          if (rows.length === 0) {
+            statusEl.textContent = "아직 등록된 방명록이 없습니다.";
+            syncSidesWithCenter(); // 중앙 높이 반영
+            return;
+          }
+
+          statusEl.textContent = "";
+          for (const r of rows) {
+            const time = formatTime(r.ts);
+            const name = String(r.name || "");
+            const msgHtml = String(r.msg || "").replace(/\n/g, "<br>");
+
+            const item = document.createElement("div");
+            item.className = "item";
+            item.innerHTML = `
+              <span class="time">${time}</span>
+              <span class="name">${name}</span>
+              ${msgHtml ? `<span class="msg">: ${msgHtml}</span>` : ""}
+            `;
+            listEl.appendChild(item);
+          }
+        } catch (err) {
+          statusEl.textContent = "데이터 불러오기 실패: " + err.message;
+          console.error("load error:", err);
+        } finally {
+          // 목록 렌더 완료 후 사이드 이미지 개수 동기화
+          syncSidesWithCenter();
+        }
+      }
+
+      formEl.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const name = nameEl.value.trim();
+        const msg  = msgEl.value.trim();
+        if (!name) return alert("이름은 필수입니다!");
+
+        try {
+          const res = await fetch(WEBAPP, {
+            method: "POST",
+            // 헤더 미지정: 프리플라이트 방지
+            body: JSON.stringify({ name, msg })
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || "저장 실패");
+
+          formEl.reset();
+          await load();      // 저장 후 목록 갱신
+          syncSidesWithCenter(); // 중앙 높이 반영
+        } catch (err) {
+          alert("저장 실패: " + err.message);
+          console.error("save error:", err);
+        }
       });
+
+      // 초기 사이드/목록 셋업
+      syncSidesWithCenter();
+      load();
     </script>
   </body>
 </html>
