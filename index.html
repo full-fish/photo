@@ -509,8 +509,8 @@
           const data = await res.json();
           if (!data.ok) throw new Error(data.error || "저장 실패");
 
-          formEl.reset();
-
+          // formEl.reset();
+          msgEl.value = "";
           // 서버에서 돌려준 row를 이용해 즉시 화면에 추가(옵티미스틱 UI)
           const r = data.row; // { ts, name, msg }  ← 민감정보 없음
           const key = `${r.ts}::${r.name}`;
