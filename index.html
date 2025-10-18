@@ -5,140 +5,175 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>좋은 말로 할때 다들 오셈</title>
     <style>
-      :root { color-scheme: dark; }
+                  :root { color-scheme: dark; }
 
-      body {
-        margin: 0;
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        background-color: #111;
-        color: #eee;
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+                  body {
+                    margin: 0;
+                    min-height: 100vh;
+                    display: grid;
+                    place-items: center;
+                    background-color: #111;
+                    color: #eee;
+                    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+                  }
+
+                  a { color: inherit; text-decoration: none; }
+
+                  /* 3열 그리드: 가운데 열을 고정 폭으로(최대 400px) */
+                  .container {
+                    width: 100%;
+                    max-width: 1200px;
+                    display: grid;
+                    grid-template-columns:
+                      clamp(44px, 12vw, 90px)
+                      minmax(260px, 400px)
+                      clamp(44px, 12vw, 90px);
+                    justify-content: center;
+                    align-items: start;
+                    gap: 3vw;
+                    padding: 4vh 2vw;
+                    box-sizing: border-box;
+                  }
+
+                  /* 사이드 스택 */
+                  .side {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 10px;
+                  }
+
+                  .img-box { position: relative; display: inline-block; }
+                  .side .img-box img {
+                    display: block;
+                    width: clamp(44px, 10vw, 90px); /* 폭 기준 동일 */
+                    height: auto;                   /* 비율 유지 */
+                    aspect-ratio: 1 / 1;            /* 정사각 비율 */
+                    object-fit: cover;              /* 꽉 채우기 */
+                    border-radius: 8px;
+                    opacity: 0.9;
+                    transition: transform 0.3s ease, opacity 0.3s ease;
+                  }
+                  .img-box:hover img { transform: scale(1.05); opacity: 1; }
+
+                  .caption {
+                    position: absolute; inset: 0;
+                    display: flex; justify-content: center; align-items: center;
+                    color: #fff; font-weight: bold; font-size: 0.9rem;
+                    background: rgba(0,0,0,0.5);
+                    border-radius: 8px; opacity: 0; transition: opacity .3s ease;
+                  }
+                  .img-box:hover .caption { opacity: 1; }
+
+                  /* 중앙 열: 수직 스택 + 중앙 정렬 */
+                  .center { display: flex; flex-direction: column; align-items: center; }
+
+                  /* 메인 이미지: 중앙 열 너비(최대 400px)에 맞춰 100%로 */
+                  .center .img-box img {
+                    width: 100%;
+                    max-width: 400px;
+                    height: auto;
+                    border-radius: 16px;
+                    box-shadow: 0 0 20px rgba(0,0,0,.5);
+                    display: block;
+                  }
+                  .center .caption { font-size: 1.6rem; border-radius: 16px; }
+
+                  /* 주소 + 위로 버튼 */
+              /* 주소 + 위로 버튼 (가운데 정렬) */
+      /* 주소 + 화살표: 전부 중앙 정렬 */
+      .address-row {
+        width: 100%;
+        max-width: 400px;
+        margin: 10px auto 0;
+        text-align: center;          /* ✅ 전체 중앙 정렬 */
+        color: #cfcfcf;
+        font-size: 14px;
       }
 
-      a { color: inherit; text-decoration: none; }
+      .address-text {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
 
-      /* 3열 그리드: 가운데 열을 고정 폭으로(최대 400px) */
-      .container {
-        width: 100%;
-        max-width: 1200px;
-        display: grid;
-        grid-template-columns:
-          clamp(44px, 12vw, 90px)
-          minmax(260px, 400px)
-          clamp(44px, 12vw, 90px);
+      .to-top {
+        display: inline-flex;
+        align-items: center;
         justify-content: center;
-        align-items: start;
-        gap: 3vw;
-        padding: 4vh 2vw;
-        box-sizing: border-box;
-      }
-
-      /* 사이드 스택 */
-      .side {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .img-box { position: relative; display: inline-block; }
-      .side .img-box img {
-        display: block;
-        width: clamp(44px, 10vw, 90px); /* 폭 기준 동일 */
-        height: auto;                   /* 비율 유지 */
-        aspect-ratio: 1 / 1;            /* ✅ 강제로 정사각 비율 */
-        object-fit: cover;              /* ✅ 이미지가 꽉 차게 */
-        border-radius: 8px;
-        opacity: 0.9;
-        transition: transform 0.3s ease, opacity 0.3s ease;
-      }
-
-      .img-box:hover img { transform: scale(1.05); opacity: 1; }
-
-      .caption {
-        position: absolute; inset: 0;
-        display: flex; justify-content: center; align-items: center;
-        color: #fff; font-weight: bold; font-size: 0.9rem;
-        background: rgba(0,0,0,0.5);
-        border-radius: 8px; opacity: 0; transition: opacity .3s ease;
-      }
-      .img-box:hover .caption { opacity: 1; }
-
-      /* 중앙 열: 수직 스택 + 중앙 정렬 */
-      .center { display: flex; flex-direction: column; align-items: center; }
-
-      /* 메인 이미지: 중앙 열 너비(최대 400px)에 맞춰 100%로 */
-      .center .img-box img {
-        width: 100%;
-        max-width: 400px;
-        height: auto;
-        border-radius: 16px;
-        box-shadow: 0 0 20px rgba(0,0,0,.5);
-        display: block;
-      }
-      .center .caption { font-size: 1.6rem; border-radius: 16px; }
-
-      /* 방명록: 메인 이미지와 동일 폭 */
-      .guestbook {
-        width: 100%;
-        max-width: 400px;
-        margin: 20px auto 0;
-        display: grid;
-        gap: 12px;
-      }
-
-      .form {
-        display: grid;
-        grid-template-columns: 0.9fr 1.1fr auto;
-        gap: 8px;
-        align-items: center;
-      }
-
-      .input, .button {
-        padding: 8px 10px;
-        border-radius: 10px;
+        width: 32px;
+        height: 32px;
+        margin-left: 8px;            /* ✅ 텍스트와 살짝 간격 */
+        border-radius: 50%;
         border: 1px solid #2a2a2a;
         background: #1a1a1a;
         color: #eee;
-        font-size: 15px;
-      }
-      .input::placeholder { color: #8a8a8a; }
-
-      .button {
-        background: #3b82f6;
-        border: none;
         cursor: pointer;
-        font-weight: 700;
+        vertical-align: middle;
       }
-      .button:hover { filter: brightness(0.95); }
+      .to-top:hover { filter: brightness(.95); }
 
-      .status {
-        font-size: 13px;
-        color: #cfcfcf;
-        text-align: left;
-        padding: 2px 4px;
-        min-height: 20px;
-      }
 
-      .list { display: grid; gap: 8px; }
-      .item {
-        background: #1a1a1a;
-        border: 1px solid #252525;
-        border-radius: 10px;
-        padding: 8px 10px;
-        line-height: 1.4;
-        word-break: break-word;
-      }
-      .time { display: block; color: #a0a0a0; font-size: 12px; margin-bottom: 4px; }
-      .name { font-weight: 800; color: #fff; }
-      .msg  { margin-left: 6px; color: #e7e7e7; }
 
-      /* 아주 좁은 화면에서 입력라인 스택 */
-      @media (max-width: 430px) {
-        .form { grid-template-columns: 1fr; }
-      }
+                  /* 방명록: 메인 이미지와 동일 폭 */
+                  .guestbook {
+                    width: 100%;
+                    max-width: 400px;
+                    margin: 20px auto 0;
+                    display: grid;
+                    gap: 12px;
+                  }
+
+                  .form {
+                    display: grid;
+                    grid-template-columns: 0.9fr 1.1fr auto;
+                    gap: 8px;
+                    align-items: center;
+                  }
+
+                  .input, .button {
+                    padding: 8px 10px;
+                    border-radius: 10px;
+                    border: 1px solid #2a2a2a;
+                    background: #1a1a1a;
+                    color: #eee;
+                    font-size: 15px;
+                  }
+                  .input::placeholder { color: #8a8a8a; }
+
+                  .button {
+                    background: #3b82f6;
+                    border: none;
+                    cursor: pointer;
+                    font-weight: 700;
+                  }
+                  .button:hover { filter: brightness(0.95); }
+
+                  .status {
+                    font-size: 13px;
+                    color: #cfcfcf;
+                    text-align: left;
+                    padding: 2px 4px;
+                    min-height: 20px;
+                  }
+
+                  .list { display: grid; gap: 8px; }
+                  .item {
+                    background: #1a1a1a;
+                    border: 1px solid #252525;
+                    border-radius: 10px;
+                    padding: 8px 10px;
+                    line-height: 1.4;
+                    word-break: break-word;
+                  }
+                  .time { display: block; color: #a0a0a0; font-size: 12px; margin-bottom: 4px; }
+                  .name { font-weight: 800; color: #fff; }
+                  .msg  { margin-left: 6px; color: #e7e7e7; }
+
+                  /* 아주 좁은 화면에서 입력라인 스택 */
+                  @media (max-width: 430px) {
+                    .form { grid-template-columns: 1fr; }
+                  }
     </style>
   </head>
   <body>
@@ -156,6 +191,7 @@
             <div class="caption">초대장임 💌</div>
           </a>
         </div>
+
         <!-- 메인 이미지 아래 -->
         <div class="address-row">
           <span class="address-text">주소</span>
@@ -188,6 +224,34 @@
 
       <div class="side" id="right-side"></div>
     </div>
+
+    <!-- ✅ UID (로컬스토리지 + 쿠키 폴백). 전송 전용, 화면에는 미노출 -->
+    <script>
+      function getCookie(name) {
+        const m = document.cookie.match('(?:^|; )' + name + '=([^;]*)');
+        return m ? decodeURIComponent(m[1]) : null;
+      }
+      function setCookie(name, value, days = 3650) {
+        const ex = new Date(Date.now() + days*24*60*60*1000).toUTCString();
+        document.cookie = `${name}=${encodeURIComponent(value)}; expires=${ex}; path=/; SameSite=Lax`;
+      }
+      function getOrCreateUID() {
+        const KEY = 'guest_uid_v1';
+        try {
+          const ls = localStorage.getItem(KEY);
+          if (ls) return ls;
+        } catch (e) {}
+        const cv = getCookie(KEY);
+        if (cv) { try { localStorage.setItem(KEY, cv); } catch(e){}; return cv; }
+        let uid;
+        if (window.crypto && crypto.randomUUID) uid = crypto.randomUUID();
+        else uid = 'uid-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,9);
+        try { localStorage.setItem(KEY, uid); } catch(e){}
+        try { setCookie(KEY, uid); } catch(e){}
+        return uid;
+      }
+      const UID = getOrCreateUID();
+    </script>
 
     <script>
       /* ===== 사이드 이미지: 중앙 높이에 맞춰 자동 증감 ===== */
@@ -264,113 +328,116 @@
       // 중앙 영역 변화(목록 증감 등)에 자동 반응
       new ResizeObserver(() => syncSidesWithCenter()).observe(centerCol);
 
+      // 위로 스크롤 버튼
+      document.getElementById("toTopBtn").addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
       // 초기 사이드 생성
       syncSidesWithCenter();
     </script>
 
     <script>
-                /* ===== 방명록 연동(빠른 버전: 페이지네이션 + “저장 중입니다”) ===== */
-                const WEBAPP = "https://script.google.com/macros/s/AKfycbxkylUrXW04l18Q2THHOfg9_Qw358rKnPKyiylJ6qaG5TEb6ccxQe7_1Jk9FPQs6KQOtw/exec";
+      /* ===== 방명록 연동(빠른 버전: 페이지네이션 + “저장 중입니다”) ===== */
+      const WEBAPP = "https://script.google.com/macros/s/AKfycbwhc9QfLOiE5ZegD_kK2fgHGLXuOPlCcmbG3Yrr1BZfBHcE5gp2AkHFfhksJigoQG0/exec";
 
-                const statusEl = document.getElementById("status");
-                const listEl   = document.getElementById("list");
-                const formEl   = document.getElementById("guestForm");
-                const nameEl   = document.getElementById("name");
-                const msgEl    = document.getElementById("msg");
+      const statusEl = document.getElementById("status");
+      const listEl   = document.getElementById("list");
+      const formEl   = document.getElementById("guestForm");
+      const nameEl   = document.getElementById("name");
+      const msgEl    = document.getElementById("msg");
 
-                const PAGE_LIMIT = 5;
-                let nextCursor = 0; // 0이면 더 없음
-                let isLoading  = false;
+      const PAGE_LIMIT = 5;
+      let nextCursor = 0; // 0이면 더 없음
+      let isLoading  = false;
 
-                const dtf = new Intl.DateTimeFormat("ko-KR", { dateStyle: "short", timeStyle: "short" });
-                function formatTime(iso) {
-                  const d = new Date(iso);
-                  return isNaN(d.getTime()) ? "" : dtf.format(d);
-                }
+      const dtf = new Intl.DateTimeFormat("ko-KR", { dateStyle: "short", timeStyle: "short" });
+      function formatTime(iso) {
+        const d = new Date(iso);
+        return isNaN(d.getTime()) ? "" : dtf.format(d);
+      }
 
-                const seenKeys = new Set(); // ✅ 이미 렌더한 항목 키 저장
+      const seenKeys = new Set(); // ✅ 이미 렌더한 항목 키 저장
+      function makeKey(r) {
+        return `${r.ts}::${r.name}`;
+      }
 
-            function makeKey(r) {
-              // ts+name으로 간단 키 구성(원하면 msg도 포함 가능)
-              return `${r.ts}::${r.name}`;
-            }
+      function renderRows(rows) {
+        const frag = document.createDocumentFragment();
+        for (const r of rows) {
+          const key = makeKey(r);
+          if (seenKeys.has(key)) continue;   // ✅ 중복 방지
+          seenKeys.add(key);
 
-            function renderRows(rows) {
-              const frag = document.createDocumentFragment();
-              for (const r of rows) {
-                const key = makeKey(r);
-                if (seenKeys.has(key)) continue;   // ✅ 중복 방지
-                seenKeys.add(key);
+          const item = document.createElement("div");
+          item.className = "item";
+          const time    = formatTime(r.ts);
+          const name    = String(r.name || "");
+          const msgHtml = String(r.msg || "").replace(/\n/g, "<br>");
+          item.innerHTML = `
+            <span class="time">${time}</span>
+            <span class="name">${name}</span>
+            ${msgHtml ? `<span class="msg">: ${msgHtml}</span>` : ""}
+          `;
+          frag.appendChild(item);
+        }
+        listEl.appendChild(frag);
+      }
 
-                const item = document.createElement("div");
-                item.className = "item";
-                const time    = formatTime(r.ts);
-                const name    = String(r.name || "");
-                const msgHtml = String(r.msg || "").replace(/\n/g, "<br>");
-                item.innerHTML = `
-                  <span class="time">${time}</span>
-                  <span class="name">${name}</span>
-                  ${msgHtml ? `<span class="msg">: ${msgHtml}</span>` : ""}
-                `;
-                frag.appendChild(item);
-              }
-              listEl.appendChild(frag);
-            }
+      async function loadPage(initial = false) {
+        if (isLoading) return;
+        isLoading = true;
+        statusEl.textContent = initial ? "불러오는 중..." : "더 불러오는 중...";
 
-            async function loadPage(initial = false) {
-              if (isLoading) return;
-              isLoading = true;
-              statusEl.textContent = initial ? "불러오는 중..." : "더 불러오는 중...";
+        try {
+          const url = nextCursor
+            ? `${WEBAPP}?limit=${PAGE_LIMIT}&cursor=${nextCursor}`
+            : `${WEBAPP}?limit=${PAGE_LIMIT}`;
+          const res = await fetch(url);
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || "서버 오류");
 
-              try {
-                const url = nextCursor
-                  ? `${WEBAPP}?limit=${PAGE_LIMIT}&cursor=${nextCursor}`
-                  : `${WEBAPP}?limit=${PAGE_LIMIT}`;
-                const res = await fetch(url);
-                const data = await res.json();
-                if (!data.ok) throw new Error(data.error || "서버 오류");
+          const rows = Array.isArray(data.rows) ? data.rows : [];
 
-                const rows = Array.isArray(data.rows) ? data.rows : [];
+          if (initial) {
+            listEl.innerHTML = "";
+            seenKeys.clear(); // ✅ 초기 로드시 키 초기화
+          }
 
-                if (initial) {
-                  listEl.innerHTML = "";
-                  seenKeys.clear(); // ✅ 초기 로드시 키 초기화
-                }
+          if (rows.length === 0 && initial) {
+            statusEl.textContent = "아직 등록된 방명록이 없습니다.";
+          } else {
+            renderRows(rows);
+            statusEl.textContent = "";
+          }
 
-                if (rows.length === 0 && initial) {
-                  statusEl.textContent = "아직 등록된 방명록이 없습니다.";
-                } else {
-                  renderRows(rows);
-                  statusEl.textContent = "";
-                }
+          nextCursor = Number(data.nextCursor || 0);
+          syncSidesWithCenter();
+        } catch (err) {
+          statusEl.textContent = "데이터 불러오기 실패: " + err.message;
+          console.error("loadPage error:", err);
+        } finally {
+          isLoading = false;
+        }
+      }
 
-                nextCursor = Number(data.nextCursor || 0);
-                syncSidesWithCenter();
-              } catch (err) {
-                statusEl.textContent = "데이터 불러오기 실패: " + err.message;
-                console.error("loadPage error:", err);
-              } finally {
-                isLoading = false;
-              }
-            }
+      // 더보기 버튼
+      const moreBtn = document.createElement("button");
+      moreBtn.textContent = "더보기";
+      moreBtn.className = "button";
+      moreBtn.style.width = "100%";
+      moreBtn.style.maxWidth = "400px";
+      moreBtn.style.margin = "4px 0 0";
+      moreBtn.addEventListener("click", async () => {
+        if (nextCursor === 0) {
+          statusEl.textContent = "더 이상 항목이 없습니다.";
+          return;
+        }
+        await loadPage(false);
+      });
+      statusEl.insertAdjacentElement("afterend", moreBtn);
 
-                // 더보기 버튼
-                const moreBtn = document.createElement("button");
-                moreBtn.textContent = "더보기";
-                moreBtn.className = "button";
-                moreBtn.style.width = "100%";
-                moreBtn.style.maxWidth = "400px";
-                moreBtn.style.margin = "4px 0 0";
-                moreBtn.addEventListener("click", async () => {
-                  if (nextCursor === 0) {
-                    statusEl.textContent = "더 이상 항목이 없습니다.";
-                    return;
-                  }
-                  await loadPage(false);
-                });
-                statusEl.insertAdjacentElement("afterend", moreBtn);
-
-                // 저장
+      // 저장 (💡 UID/브라우저 정보 함께 전송, 화면에는 표시 안 함)
       formEl.addEventListener("submit", async (e) => {
         e.preventDefault();
         const name = nameEl.value.trim();
@@ -379,9 +446,17 @@
 
         try {
           statusEl.textContent = "💾 저장 중입니다...";
+
+          const info = {
+            ua: navigator.userAgent,
+            platform: navigator.platform,
+            lang: navigator.language,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || ""
+          };
+
           const res = await fetch(WEBAPP, {
             method: "POST",
-            body: JSON.stringify({ name, msg })
+            body: JSON.stringify({ name, msg, uid: UID, info })
           });
           const data = await res.json();
           if (!data.ok) throw new Error(data.error || "저장 실패");
@@ -389,7 +464,7 @@
           formEl.reset();
 
           // 서버에서 돌려준 row를 이용해 즉시 화면에 추가(옵티미스틱 UI)
-          const r = data.row; // { ts, name, msg }
+          const r = data.row; // { ts, name, msg }  ← 민감정보 없음
           const key = `${r.ts}::${r.name}`;
           if (!seenKeys.has(key)) {
             seenKeys.add(key);
@@ -418,7 +493,6 @@
           statusEl.textContent = "❌ 저장 실패";
         }
       });
-
 
       // 초기 로드
       loadPage(true);
