@@ -380,12 +380,19 @@
 
     <script>
       /* ===== 방명록 연동(빠른 버전: 페이지네이션 + “저장 중입니다”) ===== */
-      const WEBAPP = "https://script.google.com/macros/s/AKfycbwhc9QfLOiE5ZegD_kK2fgHGLXuOPlCcmbG3Yrr1BZfBHcE5gp2AkHFfhksJigoQG0/exec";
+      const WEBAPP = "https://script.google.com/macros/s/AKfycby5ylz7bi7Kqx6dzGi1FzBOFnRPcDNrmMYLJf1_BrMzImeCpbOxeF6iw4Q3LG6_mCNv_A/exec";
 
       const statusEl = document.getElementById("status");
       const listEl   = document.getElementById("list");
       const formEl   = document.getElementById("guestForm");
       const nameEl   = document.getElementById("name");
+      // ✅ 로컬 캐시된 이름 있으면 먼저 채우기
+      const NAME_KEY = 'guest_name_v1';
+      try {
+        const savedName = localStorage.getItem(NAME_KEY);
+        if (savedName) nameEl.value = savedName;
+      } catch (_) {}
+
       const msgEl    = document.getElementById("msg");
 
       const PAGE_LIMIT = 5;
@@ -523,6 +530,7 @@
             listEl.insertBefore(item, listEl.firstChild);
           }
 
+          localStorage.setItem(NAME_KEY, name);
           statusEl.textContent = "✅ 저장되었습니다!";
           setTimeout(() => (statusEl.textContent = ""), 1200);
 
@@ -536,6 +544,23 @@
       });
 
       // 초기 로드
+      // ✅ 로컬에 없을 때만 서버에서 UID로 최근 이름 조회해서 채우기
+      (async function prefillNameFromServer() {
+        if (nameEl.value && nameEl.value.trim()) return;
+        try {
+          const url = `${WEBAPP}?lookup=name&uid=${encodeURIComponent(UID)}`;
+          const res = await fetch(url);
+          const data = await res.json();
+          if (data && data.ok && data.name) {
+            nameEl.value = data.name;
+            try { localStorage.setItem(NAME_KEY, data.name); } catch (_) {}
+          }
+        } catch (e) {
+          // 조회 실패해도 무시 (로컬/수동 입력으로 대체)
+          console.warn('prefill name failed:', e);
+        }
+      })();
+
       loadPage(true);
     </script>
   </body>
